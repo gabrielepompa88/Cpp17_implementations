@@ -1,21 +1,17 @@
 #include <iostream>
-#include <memory> // for std::move
-#include "UniquePtr.h"
-#include "Resource.h"
+#include "tests.h"
 
 int main() {
 
-	UniquePtr<Resource> p1{ new Resource };
-	UniquePtr<Resource> p2;
+	// test SharedPtr behaves as expected when nested blocks make
+	// other SharedPtr (referencing the same Resource) going out of scope
+	std::cout << "\n\ntest_nested_blocks()\n";
+	test_nested_blocks();
 
-	std::cout << "p1 is managing Resource? " << (p1.isNull() ? "No.": "Yes!") << "\n";
-	std::cout << "p2 is managing Resource? " << (p2.isNull() ? "No.": "Yes!") << "\n";
-
-	std::cout << "Resource exchange...\n";
-	p2 = std::move(p1);
-
-	std::cout << "p1 is managing Resource? " << (p1.isNull() ? "No." : "Yes!") << "\n";
-	std::cout << "p2 is managing Resource? " << (p2.isNull() ? "No." : "Yes!") << "\n";
+	// test that two SharedPtr independently referencing the (same) Resource,
+	// can be assigned to be coherent references
+	std::cout << "\n\ntest_resource_reassignment()\n";
+	test_resource_reassignment();
 
 	return 0;
 }

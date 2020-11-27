@@ -1,63 +1,133 @@
-#ifndef UNIQUE_PTR_H
-#define UNIQUE_PTR_H
+#ifndef SHARED_PTR_H
+#define SHARED_PTR_H
+
+#include <iostream>
 
 template <class T>
-class UniquePtr {
+class ControlBlock {
 
 	T* m_ptr;
+	int count;
 
-public:
-
-	// defuault ctor
-	UniquePtr(T* ptr = nullptr) : m_ptr{ptr}
-	{
-	}
-
-	// destructor
-	~UniquePtr()
+	// destroy() method to release Resource
+	void destroy()
 	{
 		delete m_ptr;
 	}
 
-	// copy ctor deleted
-	UniquePtr(const UniquePtr& original) = delete;
+public:
 
-	// move ctor
-	UniquePtr(UniquePtr&& original)
+	// ctor
+	ControlBlock(T* ptr) : m_ptr{ ptr }, count{ 1 }
 	{
-		std::cout << "move operator= called\n";
-
-		m_ptr = original.m_ptr;   // shallow copy of T-ptrs  
-		original.m_ptr = nullptr; // moved ptr left to default state
 	}
 
-	// overloaded copy-assignment operator= deleted
-	UniquePtr& operator=(const UniquePtr& original) = delete;
+	// SharedPtr can access ControlBlock private members
+	template <class T>
+	friend class SharedPtr;
 
-	// overloaded move-assignment operator=
-	UniquePtr& operator=(UniquePtr&& original) noexcept
+};
+
+template <class T>
+class SharedPtr {
+
+	T* m_ptr;
+	ControlBlock<T>* m_cb;
+
+	// increment method
+	void inc()
 	{
-		std::cout << "move operator= called\n";
-
-		if (!(this == &original))
+		// True if there is an allocated ControlBlock
+		if (m_cb)
 		{
-			delete m_ptr;             // release any resource possibly handled already
+			++(m_cb->count);
+		}
+	}
 
-			m_ptr = original.m_ptr;   // shallow copy of T-ptrs  
-			original.m_ptr = nullptr; // moved ptr left to default state
+	// decrement method
+	void dec()
+	{
+		// True if:
+		// - there is an allocated ControlBlock
+		// - the decremented reference counter reaches zero
+		if (m_cb && !(--(m_cb->count)))
+		{
+			// release Resource
+			m_cb->destroy();
+
+			// release ControlBlock
+			delete m_cb;
+		}
+	}
+public:
+
+	// default ctor
+	SharedPtr() : m_ptr{ nullptr }, m_cb{ nullptr }
+	{
+	}
+
+	// ctor
+	SharedPtr(T* ptr) : m_ptr{ ptr }, m_cb{new ControlBlock<T>(ptr)}
+	{
+	}
+
+	// copy ctor
+	SharedPtr(const SharedPtr& original) 
+		: m_ptr{ original.m_ptr }, m_cb{original.m_cb}
+	{
+		std::cout << "SharedPtr copy-ctor called.\n";
+		inc();
+	}
+
+	// overloaded assignment operator=
+	SharedPtr& operator=(const SharedPtr& original)
+	{
+		std::cout << "SharedPtr assignment operator= called.\n";
+
+		// self-assignment check
+		if (this != &original)
+		{
+			// decrement current counter
+			dec();
+
+			// assign pointers to original's resource
+			m_ptr = original.m_ptr;
+			m_cb = original.m_cb;
+
+			// increment newly assigned counter
+			inc();
 		}
 
 		return *this;
+	
+	}
+
+	// destructor
+	~SharedPtr()
+	{
+		std::cout << "~SharedPtr destructor called.\n";
+		dec();
 	}
 
 	// overloaded operator->
-	T* operator*() const { return m_ptr; }
+	T& operator*() const { return *m_ptr; }
 	
 	// overloaded operator*
-	T& operator->() const { return *m_ptr; }
+	T* operator->() const { return m_ptr; }
 
-	// check whether UniquePtr is empty
-	bool isNull() const { return m_ptr == nullptr; }
+	// reference count
+	int use_count()
+	{
+		// True if there is an allocated ControlBlock
+		if (m_cb)
+		{
+			return m_cb->count;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
 };
 

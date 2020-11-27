@@ -1,5 +1,5 @@
-#ifndef RESOURCE
-#define RESOURCE
+#ifndef RESOURCE_H
+#define RESOURCE_H
 
 #include <iostream>
 
@@ -15,6 +15,11 @@ public:
 	~Resource()
 	{
 		std::cout << "Resource destroyed.\n";
+	}
+
+	friend std::ostream& operator<<(std::ostream& out, const Resource& res)
+	{
+		return std::cout << "a Resource";
 	}
 };
 #endif
