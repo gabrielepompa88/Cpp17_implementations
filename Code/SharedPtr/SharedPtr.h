@@ -3,6 +3,10 @@
 
 #include <iostream>
 
+// to make templated class SharedPtr visible inside ControlBlock templated class
+template <class T>
+class SharedPtr;
+
 template <class T>
 class ControlBlock {
 
@@ -22,9 +26,8 @@ public:
 	{
 	}
 
-	// SharedPtr can access ControlBlock private members
-	template <class T>
-	friend class SharedPtr;
+	// SharedPtr<T> is friend of ControlBlock<T> (only with same T)
+	friend class SharedPtr<T>;
 
 };
 
