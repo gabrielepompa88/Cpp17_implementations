@@ -29,15 +29,15 @@ void test_nested_blocks()
 
 /*
 Resource acquired
-1 SharedPtr are referencing a Resource
+1 SharedPtr are referencing a Resource(n=1)
 SharedPtr copy-ctor called.
-2 SharedPtr are referencing a Resource
+2 SharedPtr are referencing a Resource(n=1)
 SharedPtr copy-ctor called.
-3 SharedPtr are referencing a Resource
+3 SharedPtr are referencing a Resource(n=1)
 ~SharedPtr destructor called.
-2 SharedPtr are referencing a Resource
+2 SharedPtr are referencing a Resource(n=1)
 ~SharedPtr destructor called.
-1 are referencing a Resource
+1 are referencing a Resource(n=1)
 ~SharedPtr destructor called.
 Resource destroyed.
 */
@@ -49,7 +49,7 @@ void test_resource_reassignment()
 	std::cout << "p_res says: " << p_res.use_count() << " SharedPtr are referencing " << *p_res << "\n";
 
 	// Resource referenced by p_other_res independently
-	SharedPtr<Resource> p_other_res{ new Resource };
+	SharedPtr<Resource> p_other_res{ new Resource(-1) };
 	std::cout << "p_other_res says: " << p_other_res.use_count() << " SharedPtr are referencing " << *p_other_res << "\n";
 
 	// make p_other_res another reference of Resource, in addition to p_res
@@ -60,13 +60,13 @@ void test_resource_reassignment()
 
 /*
 Resource acquired
-p_res says: 1 SharedPtr are referencing a Resource
+p_res says: 1 SharedPtr are referencing a Resource(n=1)
 Resource acquired
-p_other_res says: 1 SharedPtr are referencing a Resource
+p_other_res says: 1 SharedPtr are referencing a Resource(n=-1)
 SharedPtr assignment operator= called.
 Resource destroyed.
-p_res (p_other_res) says: 2(2) SharedPtr are referencing a Resource(a Resource)
+p_res (p_other_res) says: 2(2) SharedPtr are referencing a Resource(n=1)(a Resource(n=1))
 ~SharedPtr destructor called.
 ~SharedPtr destructor called.
-Resource destroyed.	
+Resource destroyed.
 */

@@ -5,9 +5,11 @@
 
 class Resource {
 
+	int m_n;
+
 public:
 
-	Resource()
+	Resource(int n = 1) : m_n{n}
 	{
 		std::cout << "Resource acquired\n";
 	}
@@ -19,7 +21,7 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& out, const Resource& res)
 	{
-		return std::cout << "a Resource";
+		return std::cout << "a Resource(n=" << res.m_n << ")";
 	}
 };
 #endif
