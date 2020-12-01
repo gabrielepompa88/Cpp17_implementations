@@ -39,7 +39,8 @@ SharedPtr copy-ctor called.
 ~SharedPtr destructor called.
 1 are referencing a Resource(n=1)
 ~SharedPtr destructor called.
-Resource destroyed.
+~Resource(): Resource released.
+~ControlBlock(): ControlBlock released.
 */
 
 void test_resource_reassignment()
@@ -64,18 +65,20 @@ p_res says: 1 SharedPtr are referencing a Resource(n=1)
 Resource acquired
 p_other_res says: 1 SharedPtr are referencing a Resource(n=-1)
 SharedPtr assignment operator= called.
-Resource destroyed.
+~Resource(): Resource released.
+~ControlBlock(): ControlBlock released.
 p_res (p_other_res) says: 2(2) SharedPtr are referencing a Resource(n=1)(a Resource(n=1))
 ~SharedPtr destructor called.
 ~SharedPtr destructor called.
-Resource destroyed.
+~Resource(): Resource released.
+~ControlBlock(): ControlBlock released.
 */
 
-void test_weak_pointers()
+void test_weak_references()
 {
 	// an empty WeakPtr 
 	WeakPtr<Resource> w_p;
-	std::cout << "Empty WeakPtr constructed: \n"; //<< *(w_p.lock());
+	std::cout << "Empty WeakPtr constructed: " << w_p.use_count() << " SharedPtr managing \n";
 
 	// nested block
 	{
@@ -87,12 +90,31 @@ void test_weak_pointers()
 		// w_p WeakPtr copy-assigned from p1 SharedPtr
 		w_p = p1;
 		std::cout << w_p.weak_count() << " WeakPtr (w_p copy-assigned from p1) is observing\n";
+		
+		std::cout << "p1 goes out of scope...\n";
 
 	} // p1 goes out of scope --> Resource released
 
-	std::cout << w_p.use_count() << " are strong-referencing the Resource\n";
+	std::cout << w_p.use_count() << " SharedPtr are strong-referencing the Resource\n";
+
+	std::cout << "w_p goes out of scope...\n";
 
 } // w_p goes out of scope --> ControlBlock released
+
+/*
+Empty WeakPtr constructed: 0 SharedPtr managing
+Resource acquired
+1 SharedPtr (p1) is managing a Resource(n=1)
+WeakPtr assignment operator= (from SharedPtr) called.
+1 WeakPtr (w_p copy-assigned from p1) is observing
+p1 goes out of scope...
+~SharedPtr destructor called.
+~Resource(): Resource released.
+0 SharedPtr are strong-referencing the Resource
+w_p goes out of scope...
+~WeakPtr destructor called.
+~ControlBlock(): ControlBlock released.
+*/
 
 void test_lock()
 {
@@ -105,6 +127,20 @@ void test_lock()
 	std::cout << w_p.weak_count() << " WeakPtr (w_p copy-constructed from p1) is observing\n";
 
 	// a SharedPtr from the locked WeakPtr
-	//auto s_w_p = w_p.lock();
-	//std::cout << s_w_p.use_count() << " SharedPtr (p1, s_w_p from w_p.lock()) is managing " << *s_w_p << "\n";
+	auto s_w_p = w_p.lock();
+	std::cout << s_w_p.use_count() << " SharedPtr (p1, s_w_p from w_p.lock()) are managing " << *s_w_p << "\n";
+
 }
+
+/*
+Resource acquired
+1 SharedPtr (p1) is managing a Resource(n=1)
+WeakPtr copy-ctor (from SharedPtr) called.
+1 WeakPtr (w_p copy-constructed from p1) is observing
+SharedPtr ctor from WeakPtr called.
+2 SharedPtr (p1, s_w_p from w_p.lock()) are managing a Resource(n=1)
+~SharedPtr destructor called.
+~WeakPtr destructor called.
+~SharedPtr destructor called.
+~Resource(): Resource released.
+*/

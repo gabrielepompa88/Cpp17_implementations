@@ -16,7 +16,7 @@ public:
 
 	~Resource()
 	{
-		std::cout << "Resource destroyed.\n";
+		std::cout << "~Resource(): Resource released.\n";
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const Resource& res)

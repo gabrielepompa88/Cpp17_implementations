@@ -37,13 +37,15 @@ public:
 	// destructor (just for printing)
 	~ControlBlock()
 	{
-		std::cout << "~ControlBlock called.\n";
+		std::cout << "~ControlBlock(): ControlBlock released.\n";
 	}
 
 	// SharedPtr<T> is friend of ControlBlock<T> (only with same T)
+	// needed to access m_cb->count_strong from SharedPtr<T>
 	friend class SharedPtr<T>;
 
 	// WeakPtr<T> is friend of ControlBlock<T> (only with same T)
+	// needed to access m_cb->count_strong from WeakPtr<T>
 	friend class WeakPtr<T>;
 
 };
@@ -53,6 +55,7 @@ class SharedPtr {
 
 
 	// WeakPtr<T> is friend of SharedPtr<T> (only with same T)
+	// needed to access private members of SharedPtr<T> from WeakPtr<T>
 	friend class WeakPtr<T>;
 
 	T* m_ptr;
@@ -100,20 +103,19 @@ public:
 
 	// copy ctor
 	SharedPtr(const SharedPtr& original) 
-		: m_ptr{ original.m_ptr }, m_cb{original.m_cb}
+		: m_ptr{ original.m_ptr }, m_cb{ original.m_cb }
 	{
 		std::cout << "SharedPtr copy-ctor called.\n";
 		inc();
 	}
 
 	// ctor from WeakPtr
-    //SharedPtr(const WeakPtr<T>& weak_ptr)
-	//	: m_ptr{ weak_ptr.m_ptr }, m_cb{weak_ptr.m_cb}
-	//SharedPtr(const WeakPtr& weak_ptr)
-	//{
-	//	std::cout << "SharedPtr ctor from WeakPtr called.\n";
-	//	SharedPtr(weak_ptr.m_ptr);
-	//}
+	SharedPtr(const WeakPtr<T>& weak_ptr)
+		: m_ptr{ weak_ptr.m_ptr }, m_cb{ weak_ptr.m_cb }
+	{
+		std::cout << "SharedPtr ctor from WeakPtr called.\n";
+		inc();
+	}
 
 	// overloaded assignment operator=
 	SharedPtr& operator=(const SharedPtr& original)
