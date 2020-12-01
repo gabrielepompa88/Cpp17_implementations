@@ -25,7 +25,7 @@ public:
 	// move ctor
 	UniquePtr(UniquePtr&& original)
 	{
-		std::cout << "move operator= called\n";
+		std::cout << "move ctor called\n";
 
 		m_ptr = original.m_ptr;   // shallow copy of T-ptrs  
 		original.m_ptr = nullptr; // moved ptr left to default state
