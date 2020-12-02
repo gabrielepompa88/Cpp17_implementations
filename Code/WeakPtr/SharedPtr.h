@@ -4,7 +4,6 @@
 // This version of SharedPtr class, includes a counter for weak-references
 
 #include <iostream>
-//#include "WeakPtr.h"
 
 // to make templated class SharedPtr visible inside ControlBlock templated class
 template <class T>
@@ -109,7 +108,7 @@ public:
 		inc();
 	}
 
-	// ctor from WeakPtr
+	// ctor from WeakPtr<T>
 	SharedPtr(const WeakPtr<T>& weak_ptr)
 		: m_ptr{ weak_ptr.m_ptr }, m_cb{ weak_ptr.m_cb }
 	{
