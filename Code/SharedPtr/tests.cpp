@@ -28,7 +28,7 @@ void test_nested_blocks()
 } // p1 goes out of scope here --> Resource released
 
 /*
-Resource acquired
+Resource (n=1) acquired
 1 SharedPtr are referencing a Resource(n=1)
 SharedPtr copy-ctor called.
 2 SharedPtr are referencing a Resource(n=1)
@@ -39,7 +39,7 @@ SharedPtr copy-ctor called.
 ~SharedPtr destructor called.
 1 are referencing a Resource(n=1)
 ~SharedPtr destructor called.
-Resource destroyed.
+Resource (n=1) destroyed.
 */
 
 void test_resource_reassignment()
@@ -59,14 +59,14 @@ void test_resource_reassignment()
 }
 
 /*
-Resource acquired
+Resource (n=1) acquired
 p_res says: 1 SharedPtr are referencing a Resource(n=1)
-Resource acquired
+Resource (n=-1) acquired
 p_other_res says: 1 SharedPtr are referencing a Resource(n=-1)
 SharedPtr assignment operator= called.
-Resource destroyed.
+Resource (n=-1) destroyed.
 p_res (p_other_res) says: 2(2) SharedPtr are referencing a Resource(n=1)(a Resource(n=1))
 ~SharedPtr destructor called.
 ~SharedPtr destructor called.
-Resource destroyed.
+Resource (n=1) destroyed.
 */
