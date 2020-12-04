@@ -108,7 +108,7 @@ public:
 		inc();
 	}
 
-	// ctor from WeakPtr<T>
+	// ctor from WeakPtr<T> (called from WeakPtr<T>::lock())
 	SharedPtr(const WeakPtr<T>& weak_ptr)
 		: m_ptr{ weak_ptr.m_ptr }, m_cb{ weak_ptr.m_cb }
 	{
