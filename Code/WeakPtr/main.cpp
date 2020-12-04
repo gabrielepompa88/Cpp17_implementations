@@ -20,11 +20,11 @@ int main() {
 	test_weak_references();
 
 	// test that WeakPtr can be locked into a SharedPtr
-	std::cout << "\n\ntest_weak_pointers()\n";
+	std::cout << "\n\ntest_lock()\n";
 	test_lock();
 
 	// test that WeakPtr solves a circular dependency
-	std::cout << "\n\ntest_weak_pointers()\n";
+	std::cout << "\n\ntest_circular_dependencies()\n";
 	test_circular_dependencies();
 
 	return 0;

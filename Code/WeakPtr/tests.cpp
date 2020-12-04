@@ -28,7 +28,7 @@ void test_nested_blocks()
 } // p1 goes out of scope here --> Resource released
 
 /*
-Resource acquired
+Resource (n=1) acquired
 1 SharedPtr are referencing a Resource(n=1)
 SharedPtr copy-ctor called.
 2 SharedPtr are referencing a Resource(n=1)
@@ -39,7 +39,7 @@ SharedPtr copy-ctor called.
 ~SharedPtr destructor called.
 1 are referencing a Resource(n=1)
 ~SharedPtr destructor called.
-~Resource(): Resource released.
+~Resource(): Resource (n=1) released.
 ~ControlBlock(): ControlBlock released.
 */
 
@@ -60,17 +60,17 @@ void test_resource_reassignment()
 }
 
 /*
-Resource acquired
+Resource (n=1) acquired
 p_res says: 1 SharedPtr are referencing a Resource(n=1)
-Resource acquired
+Resource (n=-1) acquired
 p_other_res says: 1 SharedPtr are referencing a Resource(n=-1)
 SharedPtr assignment operator= called.
-~Resource(): Resource released.
+~Resource(): Resource (n=-1) released.
 ~ControlBlock(): ControlBlock released.
 p_res (p_other_res) says: 2(2) SharedPtr are referencing a Resource(n=1)(a Resource(n=1))
 ~SharedPtr destructor called.
 ~SharedPtr destructor called.
-~Resource(): Resource released.
+~Resource(): Resource (n=1) released.
 ~ControlBlock(): ControlBlock released.
 */
 
@@ -103,13 +103,13 @@ void test_weak_references()
 
 /*
 Empty WeakPtr constructed: 0 SharedPtr managing
-Resource acquired
+Resource (n=1) acquired
 1 SharedPtr (p1) is managing a Resource(n=1)
 WeakPtr assignment operator= (from SharedPtr) called.
 1 WeakPtr (w_p copy-assigned from p1) is observing
 p1 goes out of scope...
 ~SharedPtr destructor called.
-~Resource(): Resource released.
+~Resource(): Resource (n=1) released.
 0 SharedPtr are strong-referencing the Resource
 w_p goes out of scope...
 ~WeakPtr destructor called.
@@ -133,7 +133,7 @@ void test_lock()
 }
 
 /*
-Resource acquired
+Resource (n=1) acquired
 1 SharedPtr (p1) is managing a Resource(n=1)
 WeakPtr copy-ctor (from SharedPtr) called.
 1 WeakPtr (w_p copy-constructed from p1) is observing
@@ -142,7 +142,7 @@ SharedPtr ctor from WeakPtr called.
 ~SharedPtr destructor called.
 ~WeakPtr destructor called.
 ~SharedPtr destructor called.
-~Resource(): Resource released.
+~Resource(): Resource (n=1) released.
 */
 
 void test_circular_dependencies()
@@ -163,7 +163,7 @@ void test_circular_dependencies()
 
 /*
 
-if SelfReferencingResource::m_ptr is SharedPtr:
+Case a) if SelfReferencingResource::m_ptr is SharedPtr:
 
 SelfReferencingResource acquired
 1 SharedPtr(s_p) is managing a SelfReferencingResource
@@ -171,7 +171,8 @@ SharedPtr assignment operator= called.
 2 SharedPtr(s_p and s_p->m_ptr) are managing a SelfReferencingResource
 ~SharedPtr destructor called.
 
-if SelfReferencingResource::m_ptr is WeakPtr:
+
+Case b) if SelfReferencingResource::m_ptr is WeakPtr:
 
 SelfReferencingResource acquired
 1 SharedPtr (s_p) is managing a SelfReferencingResource

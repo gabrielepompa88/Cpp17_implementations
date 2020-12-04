@@ -11,12 +11,12 @@ public:
 
 	Resource(int n = 1) : m_n{n}
 	{
-		std::cout << "Resource acquired\n";
+		std::cout << "Resource (n=" << m_n << ") acquired\n";
 	}
 
 	~Resource()
 	{
-		std::cout << "~Resource(): Resource released.\n";
+		std::cout << "~Resource(): Resource (n=" << m_n << ") released.\n";
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const Resource& res)
