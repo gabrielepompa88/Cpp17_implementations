@@ -31,6 +31,15 @@ void test_type_erasure_inheritance() {
 	}
 }
 
+/* Output:
+
+A::operator()
+B::operator()
+A::operator()
+B::operator()
+
+*/
+
 void test_type_erasure_std_function() {
 	// original (unrelated) types - both implement operator()
 	A a;
@@ -56,3 +65,12 @@ void test_type_erasure_std_function() {
 		obj(); // calls first A::operator() and then B::operator()
 	}
 }
+
+/* Output:
+
+A::operator()
+B::operator()
+A::operator()
+B::operator()
+
+*/
