@@ -30,8 +30,8 @@ class Object {
 
 public:
 
-	template<class U>
-	Object(const U& input) : m_concept{new Model<U>(input) } {}
+	template<class T>
+	Object(const T& input) : m_concept{new Model<T>(input) } {}
 
 	void operator()() const { m_concept->operator()(); }
 

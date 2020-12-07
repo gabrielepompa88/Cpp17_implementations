@@ -1,43 +1,18 @@
 #include <iostream>
 #include <vector>
 
-#include "TypeErasure_using_Inheritance.h"
-
-class A {
-public:
-	void operator()() const { std::cout << "A::operator()\n"; }
-};
-
-class B {
-public:
-	void operator()() const { std::cout << "B::operator()\n"; }
-};
+#include "tests.h"
 
 int main() {
 
-	// original (unrelated) types - both implement operator()
-	A a;
-	B b;
+	// test Type Erasure using Object/Concept/Model inheritance pattern
+	std::cout << "test_type_erasure_inheritance():\n";
+	test_type_erasure_inheritance();
 
-	// type-erased types
-	Object typeErasedObjA(a);
-	Object typeErasedObjB(b);
+	// test Type Erasure using std::function
+	std::cout << "\n\ntest_type_erasure_std_function():\n";
+	test_type_erasure_std_function();
 
-	// polymorhic behavior
-	typeErasedObjA(); // calling A::operator()
-	typeErasedObjB(); // calling B::operator()
-
-	// heterogeneous containers
-	std::vector<Object> hetero_vec;
-	
-	hetero_vec.push_back(a);
-	hetero_vec.push_back(b);
-
-	for (const auto& obj : hetero_vec)
-	{
-		obj(); // calls first A::operator() and then B::operator()
-	}
-	
 	return 0;
 
 }
