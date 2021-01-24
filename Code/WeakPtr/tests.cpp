@@ -151,7 +151,7 @@ void test_circular_dependencies()
 	SharedPtr<SelfReferencingResource> s_p{ new SelfReferencingResource };
 	std::cout << s_p.use_count() << " SharedPtr (s_p) is managing " << *s_p << "\n";
 
-	// copy-assign s_p to the empty SharedPtr (or WeakPtr to solve the circular-dependency issu) 
+	// copy-assign s_p to the empty SharedPtr (or WeakPtr to solve the circular-dependency issue) 
 	// member of SelfReferencingResource
 	s_p->m_ptr = s_p;
 
@@ -159,7 +159,7 @@ void test_circular_dependencies()
 	std::cout << s_p.use_count() << " SharedPtr (s_p) is managing " << *s_p << "\n";
 	std::cout << (s_p->m_ptr).weak_count() << " WeakPtr (s_p->m_ptr copy-assigned from p1) is observing\n";
 
-} // s_p goes out of scope, but m_ptr doesn'! --> SelfReferencingResource gets never destroyed
+} // s_p goes out of scope, but m_ptr doesn't! --> SelfReferencingResource gets never destroyed
 
 /*
 
