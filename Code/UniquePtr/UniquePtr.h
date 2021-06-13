@@ -23,7 +23,7 @@ public:
 	UniquePtr(const UniquePtr& original) = delete;
 
 	// move ctor
-	UniquePtr(UniquePtr&& original)
+	UniquePtr(UniquePtr&& original) noexcept
 	{
 		std::cout << "move ctor called\n";
 
